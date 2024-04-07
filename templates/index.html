@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Stock Predictor</title>
 </head>
 <body>
-    <h1>Hello, Flask!</h1>
-    <p>This is a simple Flask application.</p>
-    <button id="clickMeBtn">Click me!</button>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <h1>Stock Predictor</h1>
+    <form method="post">
+        <label for="stock_code">Stock Code:</label>
+        <input type="text" id="stock_code" name="stock_code" required>
+        <label for="days_past">Number of Days (5-30):</label>
+        <input type="number" id="days_past" name="days_past" min="5" max="30" required>
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Prediction Results</title>
+</head>
+<body>
+    <h1>Stock Prediction Results for {{ stock_code }}</h1>
+    {% if history %}
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Close</th>
+                <th>SMA</th>
+            </tr>
+            {% for record in history %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.Close }}</td>
+                <td>{{ record.SMA }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <p>Predicted closing price for the next day: {{ prediction }}</p>
+    {% else %}
+        <p>{{ error }}</p>
+    {% endif %}
+    <a href="{{ url_for('index') }}">Go back</a>
+</body>
+</html>
