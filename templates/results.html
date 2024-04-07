@@ -17,7 +17,8 @@
                 </tr>
                 {% for record in history %}
                 <tr>
-                    <td>{{ record['date'] }}</td>
+                    <!-- Update the key here to 'Date' -->
+                    <td>{{ record['Date'] }}</td>
                     <td>{{ record['Close'] }}</td>
                     <td>{{ record['SMA'] if record['SMA'] is not none else 'Calculating...' }}</td>
                 </tr>

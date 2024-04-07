@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import yfinance as yf
+import pandas as pd
 
 application = Flask(__name__)
 
@@ -23,6 +24,11 @@ def predict_next_day_price_with_sma_optimized(stock_code, days_past):
     
     # Retrieve the historical market data for the calculated period
     hist = stock.history(period=f"{fetch_days}d")
+    
+    # Reset the index to turn the Date from the index into a column
+    hist.reset_index(inplace=True)
+    # Format the Date column as a string for display
+    hist['Date'] = hist['Date'].dt.strftime('%Y-%m-%d')
 
     # Check if we have enough data to compute the SMA
     if len(hist) < days_past:
@@ -32,8 +38,12 @@ def predict_next_day_price_with_sma_optimized(stock_code, days_past):
     # Calculate the SMA for the specified window
     hist['SMA'] = hist['Close'].rolling(window=days_past).mean()
     prediction = hist['SMA'].iloc[-1]
-    # Pass the last 'days_past' days of closing prices, the SMA and the prediction to the results page
-    return render_template('results.html', history=hist[['Close', 'SMA']].tail(days_past).to_dict(orient='records'), prediction=prediction, stock_code=stock_code)
+    
+    # Pass the last 'days_past' days of closing prices, the SMA, and the prediction to the results page
+    return render_template('results.html', 
+                           history=hist[['Date', 'Close', 'SMA']].tail(days_past).to_dict(orient='records'), 
+                           prediction=prediction, 
+                           stock_code=stock_code)
 
 if __name__ == '__main__':
     application.run(debug=True)
