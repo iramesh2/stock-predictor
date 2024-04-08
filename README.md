@@ -1,17 +1,36 @@
 # Stock Predictor
 
 ## Overview
-This web-based application predicts stock prices by fetching historical stock data and utilizing a Simple Moving Average (SMA) method. Users can select a stock symbol and a range of days to visualize the stock's performance and obtain a predicted price.
+
+This web application allows users to predict stock prices based on historical data. Using Yahoo Finance's API, it fetches the stock price for a user-specified number of past days and calculates the Simple Moving Average (SMA). The predicted next day's price is displayed on an interactive chart.
 
 ## Features
-- Interactive web interface for stock symbol input
-- Real-time fetching of historical stock data using Yahoo Finance
-- Visualization of stock price trends and SMA using Chart.js
-- Next day's stock price prediction based on SMA
 
-## Technologies
-- Flask (Python web framework)
-- yfinance (Yahoo Finance market data downloader)
-- pandas (Data analysis and manipulation)
-- JavaScript with Ajax and jQuery for responsive UI
-- Chart.js for data visualization
+- Input for stock symbol and number of days to track
+- Real-time stock data retrieval
+- Stock price trend visualization
+- SMA calculation and next-day price prediction
+
+## Built With
+
+- Python
+- Flask
+- yfinance
+- pandas
+- JavaScript
+- Chart.js
+
+## Getting Started
+
+To get a local copy up and running follow these simple steps.
+
+### Prerequisites
+
+- Python 3
+- pip
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/<your-username>/<your-repo>.git
