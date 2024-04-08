@@ -4,32 +4,24 @@
     <meta charset="UTF-8">
     <title>Stock Prediction Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Stock Prediction Results for {{ stock_code }}</h1>
-        {% if history %}
-            <table>
-                <tr>
-                    <th>Date</th>
-                    <th>Close</th>
-                    <th>SMA</th>
-                </tr>
-                {% for record in history %}
-                <tr>
-                    <!-- Update the key here to 'Date' -->
-                    <td>{{ record['Date'] }}</td>
-                    <td>{{ record['Close'] }}</td>
-                    <td>{{ record['SMA'] if record['SMA'] is not none else 'Calculating...' }}</td>
-                </tr>
-                {% endfor %}
-            </table>
+        {% if data %}
+            <canvas id="stockChart"></canvas>
             <p class="predicted">Predicted closing price for the next day: {{ prediction }}</p>
         {% else %}
             <p>{{ error }}</p>
         {% endif %}
         <button onclick="goBack()">Go back</button>
     </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        var stockData = {{ data | tojson }};
+        createChart(stockData);
+    </script>
     <script>
         function goBack() {
             window.history.back();

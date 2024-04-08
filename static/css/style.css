@@ -10,34 +10,38 @@ body {
 }
 
 .container {
-    border: 2px solid #dedede;
-    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
     padding: 20px;
     background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 50px; /* Adjust the top margin */
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+h1 {
+    color: #333;
     margin-bottom: 20px;
 }
 
-table, th, td {
-    border: 1px solid #ddd;
+form {
+    margin-bottom: 20px;
 }
 
-th, td {
+label {
+    margin-bottom: 5px;
+    display: block;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: calc(100% - 20px); /* Full width minus padding */
     padding: 10px;
-    text-align: left;
-}
-
-th {
-    background-color: #f0f0f0;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
 button {
@@ -46,6 +50,8 @@ button {
     background-color: #008cba;
     color: white;
     cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
@@ -53,13 +59,26 @@ button:hover {
     background-color: #005f73;
 }
 
+#stock-chart {
+    width: 100%;
+    height: 400px;
+    margin-bottom: 20px;
+}
+
 .predicted {
     font-weight: bold;
     color: #d04a02;
+    margin-top: 20px;
 }
 
-/* Additional styles for nicer look */
-h1 {
-    text-align: center;
-    color: #333;
+/* You may not have had this, but it's good practice */
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Styling for the "Predict" button when it becomes visible */
+#predict {
+    display: none; /* Hidden by default, will be shown by the script */
+    margin-top: 20px;
 }

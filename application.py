@@ -1,49 +1,34 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import yfinance as yf
 import pandas as pd
+import json
 
-application = Flask(__name__)
+app = Flask(__name__)
 
-@application.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
-    if request.method == 'POST':
-        stock_code = request.form['stock_code'].upper()  # Convert to uppercase to handle case sensitivity
-        days_past = int(request.form['days_past'])
-        return predict_next_day_price_with_sma_optimized(stock_code, days_past)
+    # Display the form to get the stock symbol and number of days
     return render_template('index.html')
 
-def predict_next_day_price_with_sma_optimized(stock_code, days_past):
-    # Ensure days_past is within the allowed range [5, 30]
-    days_past = max(5, min(days_past, 30))
-    
-    # Calculate the minimum period to fetch based on the weekends and potential holidays
-    fetch_days = int(days_past * 1.5)
-    
-    # Fetch stock data
+@app.route('/get_stock_data', methods=['POST'])
+def get_stock_data():
+    stock_code = request.form['stock_code'].upper()
+    days_past = int(request.form['days_past'])
     stock = yf.Ticker(stock_code)
-    
-    # Retrieve the historical market data for the calculated period
-    hist = stock.history(period=f"{fetch_days}d")
-    
-    # Reset the index to turn the Date from the index into a column
+    hist = stock.history(period=f"{days_past}d")
     hist.reset_index(inplace=True)
-    # Format the Date column as a string for display
     hist['Date'] = hist['Date'].dt.strftime('%Y-%m-%d')
+    hist = hist[['Date', 'Close']].to_dict(orient='records')
+    return jsonify(hist)
 
-    # Check if we have enough data to compute the SMA
-    if len(hist) < days_past:
-        error_message = "Not enough data available to calculate the SMA for the requested period."
-        return render_template('results.html', error=error_message)
-    
-    # Calculate the SMA for the specified window
-    hist['SMA'] = hist['Close'].rolling(window=days_past).mean()
-    prediction = hist['SMA'].iloc[-1]
-    
-    # Pass the last 'days_past' days of closing prices, the SMA, and the prediction to the results page
-    return render_template('results.html', 
-                           history=hist[['Date', 'Close', 'SMA']].tail(days_past).to_dict(orient='records'), 
-                           prediction=prediction, 
-                           stock_code=stock_code)
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = json.loads(request.form['data'])
+    days_past = int(request.form['days_past'])
+    df = pd.DataFrame(data)
+    df['SMA'] = df['Close'].rolling(window=days_past).mean()
+    prediction = df['SMA'].iloc[-1]
+    return jsonify({'prediction': prediction})
 
 if __name__ == '__main__':
-    application.run(debug=True)
+    app.run(debug=True)
