@@ -10,18 +10,21 @@
     <div class="container">
         <h1>Stock Prediction Results for {{ stock_code }}</h1>
         {% if data %}
-            <canvas id="stockChart"></canvas>
+            <canvas id="stock-chart" style="width: 100%; height: 400px;"></canvas>
+            <p class="predicted">Prediction Model Used: {{ prediction_model | capitalize }}</p>
             <p class="predicted">Predicted closing price for the next day: {{ prediction }}</p>
+            <script>
+                $(document).ready(function() {
+                    var stockData = {{ data | tojson }};
+                    createOrUpdateChart(stockData, "{{ prediction }}");
+                });
+            </script>
         {% else %}
             <p>{{ error }}</p>
         {% endif %}
         <button onclick="goBack()">Go back</button>
     </div>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script>
-        var stockData = {{ data | tojson }};
-        createChart(stockData);
-    </script>
     <script>
         function goBack() {
             window.history.back();

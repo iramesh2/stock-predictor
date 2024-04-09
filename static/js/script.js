@@ -1,4 +1,4 @@
-// Global variable to store the fetched stock data
+// Global variable to store the fetched stock data and the stock chart instance
 var globalStockData;
 var stockChart;
 
@@ -6,6 +6,7 @@ $(document).ready(function() {
     $('#get-data').on('click', function() {
         var stockCode = $('#stock_code').val();
         var daysPast = $('#days_past').val();
+        var predictionModel = $('#prediction_model').val(); // Ensure this is included in your form
         
         if (stockCode && daysPast) {
             $.ajax({
@@ -17,8 +18,8 @@ $(document).ready(function() {
                 },
                 success: function(data) {
                     globalStockData = data;
-                    drawChart(data);
-                    $('#predict').show();
+                    createOrUpdateChart(data);
+                    $('#predict').show(); // Make the predict button visible after data is fetched
                 },
                 error: function(error) {
                     console.error("Error fetching stock data: ", error);
@@ -29,65 +30,68 @@ $(document).ready(function() {
 
     $('#predict').on('click', function() {
         var daysPast = $('#days_past').val();
-
-        if (globalStockData && daysPast) {
+        var predictionModel = $('#prediction_model').val();
+    
+        if (globalStockData && daysPast && predictionModel) {
             $.ajax({
                 type: 'POST',
                 url: '/predict',
-                data: {
-                    data: JSON.stringify(globalStockData),
-                    days_past: daysPast
-                },
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    data: globalStockData,
+                    days_past: daysPast,
+                    prediction_model: predictionModel
+                }),
                 success: function(response) {
                     var prediction = response.prediction;
-                    updateChartWithPrediction(prediction);
+                    createOrUpdateChart(globalStockData, prediction);
                 },
-                error: function(error) {
-                    console.error("Error predicting stock price: ", error);
+                error: function(xhr, status, error) {
+                    console.error("Error predicting stock price: ", xhr.responseText);
                 }
             });
         }
     });
 });
 
-function drawChart(stockData) {
+// Function to create or update the chart
+function createOrUpdateChart(stockData, prediction) {
     var ctx = document.getElementById('stock-chart').getContext('2d');
     var labels = stockData.map(function(item) { return item.Date; });
     var data = stockData.map(function(item) { return item.Close; });
-    
-    if (stockChart) {
-        stockChart.destroy();
+
+    // If a prediction is provided, add it to the data
+    if (prediction !== undefined) {
+        labels.push('Prediction');
+        data.push(prediction);
     }
 
-    stockChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Close Price',
-                data: data,
-                fill: false,
-                borderColor: 'blue',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
+    if (stockChart) {
+        stockChart.data.labels = labels;
+        stockChart.data.datasets[0].data = data;
+        stockChart.update();
+    } else {
+        stockChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Stock Price',
+                    data: data,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
                 }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
             }
-        }
-    });
-}
-
-function updateChartWithPrediction(prediction) {
-    stockChart.data.labels.push('Prediction');
-    stockChart.data.datasets.forEach((dataset) => {
-        dataset.data.push(prediction);
-    });
-    stockChart.update();
+        });
+    }
 }

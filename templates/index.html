@@ -9,20 +9,34 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Stock Predictor</h1>
-    <form id="stock-form">
-        <label for="stock_code">Stock Symbol:</label>
-        <input type="text" id="stock_code" name="stock_code" required>
-
-        <label for="days_past">Number of Days:</label>
-        <input type="number" id="days_past" name="days_past" required>
-
-        <button type="button" id="get-data">Get Stock Price</button>
-    </form>
-    <div>
-        <canvas id="stock-chart" style="width: 100%; height: 400px;"></canvas>
+    <div class="container">
+        <h1>Stock Predictor</h1>
+        <form id="stock-form">
+            <div>
+                <label for="stock_code">Stock Symbol:</label>
+                <input type="text" id="stock_code" name="stock_code" required>
+            </div>
+            
+            <div>
+                <label for="days_past">Number of Days:</label>
+                <input type="number" id="days_past" name="days_past" required>
+            </div>
+            
+            <div>
+                <label for="prediction_model">Prediction Model:</label>
+                <select id="prediction_model" name="prediction_model" required>
+                    <option value="sma">Simple Moving Average</option>
+                    <option value="linear_regression">Linear Regression</option>
+                </select>
+            </div>
+            
+            <button type="button" id="get-data">Get Stock Price</button>
+        </form>
+        <div>
+            <canvas id="stock-chart" style="width: 100%; height: 400px;"></canvas>
+        </div>
+        <button type="button" id="predict" style="display:none;">Predict</button>
     </div>
-    <button type="button" id="predict" style="display:none;">Predict</button>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
