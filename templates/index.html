@@ -27,10 +27,12 @@
                 <select id="prediction_model" name="prediction_model" required>
                     <option value="sma">Simple Moving Average</option>
                     <option value="linear_regression">Linear Regression</option>
+                    <option value="monte_carlo">Monte Carlo Simulation</option> 
                 </select>
             </div>
             
             <button type="button" id="get-data">Get Stock Price</button>
+            <p id="prediction-result" style="display: none;"></p>
         </form>
         <div>
             <canvas id="stock-chart" style="width: 100%; height: 400px;"></canvas>

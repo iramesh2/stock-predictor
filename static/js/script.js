@@ -3,6 +3,9 @@ var globalStockData;
 var stockChart;
 
 $(document).ready(function() {
+    Chart.defaults.font.family = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+    Chart.defaults.font.size = 14;
+    Chart.defaults.font.color = '#0a558c';
     $('#get-data').on('click', function() {
         var stockCode = $('#stock_code').val();
         var daysPast = $('#days_past').val();
@@ -31,7 +34,7 @@ $(document).ready(function() {
     $('#predict').on('click', function() {
         var daysPast = $('#days_past').val();
         var predictionModel = $('#prediction_model').val();
-    
+        
         if (globalStockData && daysPast && predictionModel) {
             $.ajax({
                 type: 'POST',
@@ -46,6 +49,10 @@ $(document).ready(function() {
                 success: function(response) {
                     var prediction = response.prediction;
                     createOrUpdateChart(globalStockData, prediction);
+                    
+                    // Now, also display the numerical prediction.
+                    $('#prediction-result').text('Predicted closing price for the next day: ' + prediction.toFixed(2));
+                    $('#prediction-result').show();
                 },
                 error: function(xhr, status, error) {
                     console.error("Error predicting stock price: ", xhr.responseText);
@@ -53,6 +60,7 @@ $(document).ready(function() {
             });
         }
     });
+    
 });
 
 // Function to create or update the chart

@@ -12,11 +12,13 @@
         {% if data %}
             <canvas id="stock-chart" style="width: 100%; height: 400px;"></canvas>
             <p class="predicted">Prediction Model Used: {{ prediction_model | capitalize }}</p>
-            <p class="predicted">Predicted closing price for the next day: {{ prediction }}</p>
+            <!-- Ensure that `prediction` is a float or None before applying the filter -->
+            <p class="predicted">Predicted closing price for the next day: {{ prediction | default(0) | float | round(2) }}</p>
+            
             <script>
                 $(document).ready(function() {
                     var stockData = {{ data | tojson }};
-                    createOrUpdateChart(stockData, "{{ prediction }}");
+                    createOrUpdateChart(stockData, {{ prediction | default('null') }});
                 });
             </script>
         {% else %}
