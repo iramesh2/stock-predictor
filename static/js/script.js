@@ -6,11 +6,11 @@ $(document).ready(function() {
     Chart.defaults.font.family = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
     Chart.defaults.font.size = 14;
     Chart.defaults.font.color = '#0a558c';
+
     $('#get-data').on('click', function() {
         var stockCode = $('#stock_code').val();
         var daysPast = $('#days_past').val();
-        var predictionModel = $('#prediction_model').val(); // Ensure this is included in your form
-        
+
         if (stockCode && daysPast) {
             $.ajax({
                 type: 'POST',
@@ -19,10 +19,11 @@ $(document).ready(function() {
                     stock_code: stockCode,
                     days_past: daysPast
                 },
-                success: function(data) {
-                    globalStockData = data;
-                    createOrUpdateChart(data);
-                    $('#predict').show(); // Make the predict button visible after data is fetched
+                success: function(response) {
+                    globalStockData = response.history;
+                    createOrUpdateChart(globalStockData);
+                    updateDashboard(response.dashboard); // Update dashboard with new data
+                    $('#predict').show();
                 },
                 error: function(error) {
                     console.error("Error fetching stock data: ", error);
@@ -32,10 +33,9 @@ $(document).ready(function() {
     });
 
     $('#predict').on('click', function() {
-        var daysPast = $('#days_past').val();
         var predictionModel = $('#prediction_model').val();
-        
-        if (globalStockData && daysPast && predictionModel) {
+
+        if (globalStockData && predictionModel) {
             $.ajax({
                 type: 'POST',
                 url: '/predict',
@@ -43,16 +43,18 @@ $(document).ready(function() {
                 dataType: "json",
                 data: JSON.stringify({
                     data: globalStockData,
-                    days_past: daysPast,
                     prediction_model: predictionModel
                 }),
                 success: function(response) {
                     var prediction = response.prediction;
-                    createOrUpdateChart(globalStockData, prediction);
-                    
-                    // Now, also display the numerical prediction.
+                    globalStockData.push({
+                        Date: `+1 day`, // Placeholder, you need actual date logic here
+                        Close: prediction
+                    });
+                    createOrUpdateChart(globalStockData);
                     $('#prediction-result').text('Predicted closing price for the next day: ' + prediction.toFixed(2));
                     $('#prediction-result').show();
+                    updateDashboard(response.dashboard); // If dashboard should include prediction results
                 },
                 error: function(xhr, status, error) {
                     console.error("Error predicting stock price: ", xhr.responseText);
@@ -60,20 +62,20 @@ $(document).ready(function() {
             });
         }
     });
-    
+
+    $('#undo-predict').on('click', function() {
+        if (globalStockData.length > 0) {
+            globalStockData.pop();
+            createOrUpdateChart(globalStockData);
+            $('#undo-predict').hide(); // Hide the undo button after undoing prediction
+        }
+    });
 });
 
-// Function to create or update the chart
-function createOrUpdateChart(stockData, prediction) {
+function createOrUpdateChart(stockData) {
     var ctx = document.getElementById('stock-chart').getContext('2d');
     var labels = stockData.map(function(item) { return item.Date; });
     var data = stockData.map(function(item) { return item.Close; });
-
-    // If a prediction is provided, add it to the data
-    if (prediction !== undefined) {
-        labels.push('Prediction');
-        data.push(prediction);
-    }
 
     if (stockChart) {
         stockChart.data.labels = labels;
@@ -102,4 +104,12 @@ function createOrUpdateChart(stockData, prediction) {
             }
         });
     }
+}
+
+function updateDashboard(dashboardData) {
+    $('#current-price').text(dashboardData.currentPrice || 'N/A');
+    $('#volume').text(dashboardData.volume || 'N/A');
+    $('#market-cap').text(dashboardData.marketCap || 'N/A');
+    // Show the dashboard section
+    $('#stock-dashboard').show();
 }

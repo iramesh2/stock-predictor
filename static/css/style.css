@@ -59,9 +59,9 @@ select {
     font-size: 1em;
 }
 
+/* Button styles */
 button {
-    width: 100%;
-    padding: 10px;
+    padding: 10px 20px;
     border: none;
     background-image: linear-gradient(to right, #6db9ef, #7ce08a); /* Gradient adjusted to blue */
     color: white;
@@ -70,8 +70,16 @@ button {
     font-size: 1em;
     transition: background-color 0.3s ease;
     letter-spacing: 1px;
+    display: inline-block; /* Align buttons in a row */
+    margin: 5px; /* Add a little space around buttons */
 }
 
+/* Style to provide spacing between buttons */
+#predict {
+    margin-right: 10px; /* Add space to the right of the predict button */
+}
+
+/* Specific button modifications can go here */
 button:hover {
     background-image: linear-gradient(to right, #58a6d8, #6ad97c); /* Darker gradient on hover */
 }
@@ -104,4 +112,29 @@ button:hover {
     h1 {
         font-size: 1.75em;
     }
+}
+
+
+#stock-dashboard {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+}
+
+#stock-dashboard h2 {
+    margin-bottom: 10px;
+}
+
+#stock-dashboard div {
+    margin-bottom: 5px;
+}
+
+#stock-dashboard {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #0a558c; /* Replace with the color code you're using for the rest of the text */
+    margin-top: 20px;
+}
+
+#stock-dashboard strong {
+    font-weight: 600;
 }

@@ -37,7 +37,17 @@
         <div>
             <canvas id="stock-chart" style="width: 100%; height: 400px;"></canvas>
         </div>
-        <button type="button" id="predict" style="display:none;">Predict</button>
+        <button type="button" id="predict" class="btn-space" style="display:none;">Predict</button>
+        <button type="button" id="undo-predict" class="btn-second" style="display:none;">Undo Last Prediction</button>
+
+        <!-- Dashboard section -->
+        <div id="stock-dashboard" style="display:none;">
+            <h2>Stock Information</h2>
+            <div><strong>Current Price:</strong> <span id="current-price">-</span></div>
+            <div><strong>Volume:</strong> <span id="volume">-</span></div>
+            <div><strong>Market Cap:</strong> <span id="market-cap">-</span></div>
+            <!-- Add more fields as needed -->
+        </div>
     </div>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
